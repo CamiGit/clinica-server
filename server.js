@@ -1,7 +1,10 @@
 const { WebSocketServer } = require('ws');
 const { spawn } = require('child_process');
 
-const wss = new WebSocketServer({ port: process.env.PORT || 8080 });
+const wss = new WebSocketServer({ 
+  port: process.env.PORT || 8080,
+  host: '0.0.0.0'
+});
 
 console.log('WebSocket server corriendo...');
 
