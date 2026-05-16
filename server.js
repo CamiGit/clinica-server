@@ -14,11 +14,17 @@ wss.on('connection', (ws) => {
   const java = spawn('java', ['-jar', 'clinica.jar']);
 
   java.stdout.on('data', (data) => {
-    ws.send(data.toString());
+    const text = data.toString()
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+    ws.send(text);
   });
 
   java.stderr.on('data', (data) => {
-    ws.send('[ERROR] ' + data.toString());
+    const text = data.toString()
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+    ws.send('[ERROR] ' + text);
   });
 
   ws.on('message', (msg) => {
