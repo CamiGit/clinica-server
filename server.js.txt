@@ -1,0 +1,33 @@
+const { WebSocketServer } = require('ws');
+const { spawn } = require('child_process');
+
+const wss = new WebSocketServer({ port: process.env.PORT || 8080 });
+
+console.log('WebSocket server corriendo...');
+
+wss.on('connection', (ws) => {
+  console.log('Cliente conectado');
+
+  const java = spawn('java', ['-jar', 'clinica.jar']);
+
+  java.stdout.on('data', (data) => {
+    ws.send(data.toString());
+  });
+
+  java.stderr.on('data', (data) => {
+    ws.send('[ERROR] ' + data.toString());
+  });
+
+  ws.on('message', (msg) => {
+    java.stdin.write(msg.toString() + '\n');
+  });
+
+  java.on('close', (code) => {
+    ws.send('\n[Sesión terminada]');
+  });
+
+  ws.on('close', () => {
+    java.kill();
+    console.log('Cliente desconectado');
+  });
+});

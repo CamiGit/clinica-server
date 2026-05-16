@@ -1,0 +1,16 @@
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y nodejs npm
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+RUN mkdir -p datos
+
+EXPOSE 8080
+
+CMD ["node", "server.js"]
